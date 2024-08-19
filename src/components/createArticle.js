@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import apiClient from "./apiClient";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import "../index.css";
@@ -23,14 +23,9 @@ const CreateArticle = () => {
   });
 
   const onSubmit = (values, { resetForm }) => {
-    const token = localStorage.getItem("token"); // Retrieve the token from localStorage
 
-    axios
-      .post("/api/articles", values, {
-        headers: {
-          Authorization: `Bearer ${token}`, // Attach the token here
-        },
-      })
+    apiClient
+      .post("/api/articles", values, )
       .then((response) => {
         setMessage("Article created successfully");
         resetForm();

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import apiClient from "./apiClient";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { useParams } from "react-router-dom";
@@ -15,16 +15,19 @@ const UpdateArticle = () => {
   });
 
   useEffect(() => {
-    axios
-      .get(`/api/articles/${id}`)
-      .then((response) => {
-        const { title, content, category } = response.data.article;
-        setInitialValues({ title, content, category });
-      })
-      .catch((error) => {
-        setMessage("Error fetching article details");
-      });
-  }, [id]);
+  const fetchArticleDetails = async () => {
+    try {
+      const response = await apiClient.get(`/api/articles/${id}`);
+      const { title, content, category } = response.data.article;
+      setInitialValues({ title, content, category });
+    } catch (error) {
+      setMessage("Error fetching article details");
+    }
+  };
+
+  fetchArticleDetails();
+}, [id]);
+
 
   const validationSchema = Yup.object({
     title: Yup.string()
@@ -34,22 +37,15 @@ const UpdateArticle = () => {
     category: Yup.string().required("Category is required"),
   });
 
-  const onSubmit = (values) => {
-    const token = localStorage.getItem("token"); // Retrieve the token from localStorage
-
-    axios
-      .put(`/api/articles/${id}`, values, {
-        headers: {
-          Authorization: `Bearer ${token}`, // Attach the token here
-        },
-      })
-      .then((response) => {
-        setMessage("Article updated successfully");
-      })
-      .catch((error) => {
-        setMessage("Error updating article");
-      });
+  const onSubmit = async (values) => {
+    try {
+      const response = await apiClient.put(`/api/articles/${id}`, values);
+      setMessage("Article updated successfully");
+    } catch (error) {
+      setMessage("Error updating article");
+    }
   };
+
 
   return (
     <div className="container">

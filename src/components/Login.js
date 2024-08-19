@@ -1,7 +1,7 @@
 import React from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import apiClient from "./apiClient"; // Make sure this is configured properly
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import "../index.css";
 
@@ -26,12 +26,9 @@ const Login = () => {
     try {
       const response = await apiClient.post("/api/login", values);
       alert("Login successful");
-      // Save token to local storage
       localStorage.setItem("token", response.data.token);
-      // Redirect after successful login
-      navigate("/articles");
+      navigate("/");
     } catch (error) {
-      // Check for errors and set them
       if (error.response && error.response.data) {
         setErrors({ submit: error.response.data.message });
       } else {
@@ -70,6 +67,8 @@ const Login = () => {
             <button type="submit" disabled={isSubmitting}>
               Submit
             </button>
+            <h5>Don't have an account?</h5>
+            <Link to="/register">Register</Link>
           </Form>
         )}
       </Formik>
